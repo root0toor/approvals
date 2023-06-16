@@ -1,0 +1,30 @@
+fastapi==0.87.0
+SQLAlchemy==1.4.29
+pydantic==1.10.8
+SQLAlchemy-Utils==0.38.2
+alembic==1.7.5
+hypercorn==0.13.2
+validators==0.18.2
+jsonschema==4.4.0
+python-logstash==0.4.6
+fastapi-mail==1.2.2
+PyJWT==2.3.0
+requests==2.28.1
+kafka-python==2.0.2
+aiokafka==0.8.0
+
+# mysql packages
+aiomysql==0.0.22
+mysqlclient==2.1.0
+
+# exception tracking package
+sentry-sdk==1.5.8
+
+# testing package
+pytest==6.2.5
+
+# local developent
+ipython
+
+# datadog
+ddtrace

@@ -1,0 +1,320 @@
+openapi: 3.0.2
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /approvals/approvalflow/create:
+    post:
+      tags:
+        - ApprovalFlow
+      summary: Createapprovalflowcontroller
+      description: |-
+        This function is made for creating an Approval flow along with Approval Step
+        and Step Approver.The Approval flow can only be created by hiver admin if he has
+        an access of the particular SM for which he is going to create an Approval flow.
+      operationId: createApprovalFlowController_approvals_approvalflow_create_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApprovalFlowRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /approvals/approvalflow/smapprovalflowlist/{smid}:
+    get:
+      tags:
+        - ApprovalFlow
+      summary: Getapprovalflowlistforsm
+      operationId: getApprovalFlowListForSM_approvals_approvalflow_smapprovalflowlist__smid__get
+      parameters:
+        - required: true
+          schema:
+            title: Smid
+            type: integer
+          name: smid
+          in: path
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /approvals/approvalflow/{approvalflowid}:
+    patch:
+      tags:
+        - ApprovalFlow
+      summary: Update Approval Flow
+      operationId: update_approval_flow_approvals_approvalflow__approvalflowid__patch
+      parameters:
+        - required: true
+          schema:
+            title: Approvalflowid
+            type: integer
+          name: approvalflowid
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateApprovalFlowRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /approvals/approvalrequest/details:
+    get:
+      tags:
+        - ApprovalRequest
+      summary: Approvalrequestdetailcontroller
+      description: |-
+        This function is made to fetch the approval request details
+        along with the approver history for the conversation attached
+        to it.
+      operationId: approvalRequestDetailController_approvals_approvalrequest_details_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /approvals/approvalrequest/create:
+    post:
+      tags:
+        - ApprovalRequest
+      summary: Createapprovalrequestcontroller
+      description: Create an approval request for a conversation
+      operationId: createApprovalRequestController_approvals_approvalrequest_create_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApprovalRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /approvals/approvalrequest/process:
+    post:
+      tags:
+        - ApprovalRequest
+      summary: Processapprovalrequestcontroller
+      description: Transition an approval request to the next step
+      operationId: processApprovalRequestController_approvals_approvalrequest_process_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProcessApprovalRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /approvals/smcollaboratorlist:
+    post:
+      tags:
+        - Approver
+      summary: Get Sm Collaborator List
+      operationId: get_sm_collaborator_list_approvals_smcollaboratorlist_post
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /approvals/check-access:
+    get:
+      tags:
+        - Approver
+      summary: Has Access
+      operationId: has_access_approvals_check_access_get
+      parameters:
+        - required: true
+          schema:
+            title: Collaborator Id
+            type: integer
+          name: collaborator_id
+          in: query
+        - required: true
+          schema:
+            title: Conversation Id
+            type: integer
+          name: conversation_id
+          in: query
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /internal/approvers:
+    get:
+      tags:
+        - Internal
+      summary: Fetch Approvers
+      operationId: fetch_approvers_internal_approvers_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+components:
+  schemas:
+    CreateApprovalFlowRequest:
+      title: CreateApprovalFlowRequest
+      required:
+        - name
+        - smId
+        - steps
+      type: object
+      properties:
+        name:
+          title: Name
+          maxLength: 100
+          minLength: 1
+          type: string
+        smId:
+          title: Smid
+          type: integer
+        steps:
+          title: Steps
+          type: array
+          items: {}
+    CreateApprovalRequest:
+      title: CreateApprovalRequest
+      required:
+        - approvalFlowId
+        - conversationId
+        - smId
+      type: object
+      properties:
+        approvalFlowId:
+          title: Approvalflowid
+          type: integer
+        conversationId:
+          title: Conversationid
+          type: integer
+        smId:
+          title: Smid
+          type: string
+    HTTPValidationError:
+      title: HTTPValidationError
+      type: object
+      properties:
+        detail:
+          title: Detail
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationError'
+    ProcessApprovalRequest:
+      title: ProcessApprovalRequest
+      required:
+        - approvalRequestId
+        - status
+      type: object
+      properties:
+        approvalRequestId:
+          title: Approvalrequestid
+          type: string
+        status:
+          title: Status
+          enum:
+            - APPROVED
+            - REJECTED
+            - CANCELLED
+          type: string
+        reason:
+          title: Reason
+          type: string
+        note:
+          title: Note
+          maxLength: 100
+          type: string
+    UpdateApprovalFlowRequest:
+      title: UpdateApprovalFlowRequest
+      required:
+        - smId
+      type: object
+      properties:
+        smId:
+          title: Smid
+          type: integer
+        name:
+          title: Name
+          maxLength: 100
+          minLength: 1
+          type: string
+        isActive:
+          title: Isactive
+          type: boolean
+    ValidationError:
+      title: ValidationError
+      required:
+        - loc
+        - msg
+        - type
+      type: object
+      properties:
+        loc:
+          title: Location
+          type: array
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+        msg:
+          title: Message
+          type: string
+        type:
+          title: Error Type
+          type: string

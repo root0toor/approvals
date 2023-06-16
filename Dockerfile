@@ -1,0 +1,8 @@
+FROM public.ecr.aws/docker/library/python:3.8
+WORKDIR /code
+COPY . .
+WORKDIR /code/api
+RUN python -m pip install --upgrade pip
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+EXPOSE 8002
+CMD ["sh", "start_scripts/start_app.sh"]

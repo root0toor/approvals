@@ -1,0 +1,9 @@
+FROM public.ecr.aws/docker/library/python:3.8
+COPY . .
+WORKDIR /api
+RUN python -m pip install --upgrade pip
+RUN apt update && apt install -y vim
+RUN ls
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
+EXPOSE 8002
+CMD ["sh", "start_scripts/start_buddy.sh"]

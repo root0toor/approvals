@@ -1,0 +1,16 @@
+version: '3.3'
+services:
+  approvals:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    env_file:
+      - vars.env
+    container_name: approvals
+    volumes:
+      - .:/code
+    ports:
+      - 8002:8002
+    restart: on-failure:3
+
+

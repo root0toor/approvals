@@ -1,0 +1,8 @@
+SERVICE=${1}
+DOCKERFILE=${2}
+ECR_REPO=${ECR_URI}/${SERVICE}
+
+docker build -t $ECR_REPO:$CODEBUILD_RESOLVED_SOURCE_VERSION -t $ECR_REPO:latest --cache-from $ECR_REPO:latest -f ${DOCKERFILE} .
+docker push $ECR_REPO:$CODEBUILD_RESOLVED_SOURCE_VERSION
+docker push $ECR_REPO:latest
+echo "Image pushed with tag:$CODEBUILD_RESOLVED_SOURCE_VERSION"

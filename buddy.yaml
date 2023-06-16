@@ -1,0 +1,5 @@
+image-registry: 013559774086.dkr.ecr.ap-south-1.amazonaws.com/approvals
+dev-image-location: 013559774086.dkr.ecr.ap-south-1.amazonaws.com/approvals
+code-base-dir: api
+docker-work-directory: /api
+start_up_command: "sh start_scripts/start_app.sh"

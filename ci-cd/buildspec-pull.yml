@@ -1,0 +1,51 @@
+version: 0.2
+
+env:
+  variables:
+    DEPLOYER_URL: 'https://deployer.hiver.space'
+
+phases:
+  install:
+    commands:
+      - printenv
+      - aws ecr get-login-password --region  $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+  pre_build:
+    commands:
+      - export BRANCHNAME=`echo $CODEBUILD_WEBHOOK_HEAD_REF | cut -d '/' -f 3`
+      - echo "CODEBUILD_WEBHOOK_HEAD_REF = ${CODEBUILD_WEBHOOK_HEAD_REF}"
+      - echo "${DEPLOYER_URL}/api/assign?branchname=${BRANCHNAME}&repo=${REPO_NAME}&pr=${CODEBUILD_WEBHOOK_TRIGGER}"
+      - curl -G -H "buddy-api-key:${BUDDY_API_KEY}" --data-urlencode "codebuild_url=${CODEBUILD_BUILD_URL}" --data-urlencode "build_number=${CODEBUILD_BUILD_NUMBER}" --data-urlencode "branchname=${BRANCHNAME}" --data-urlencode "repo=${REPO_NAME}" --data-urlencode "pr=${CODEBUILD_WEBHOOK_TRIGGER}" "${DEPLOYER_URL}/api/assign" > alloc_result.txt
+      - cat alloc_result.txt
+      - export APP_ENV=$(cat alloc_result.txt | jq ".area.name // empty" | tr -d '"')
+      - export FRESH_PR=$(cat alloc_result.txt | jq ".freshPR // empty" | tr -d '"')
+      - |
+        if [ $APP_ENV ]; then
+          echo env created is $APP_ENV
+        else
+          echo "No Buddy assigned ABORTING"
+        fi
+    finally:
+      - echo This always runs even if the login command fails
+
+  build:
+    commands:
+      - |
+        if [ $APP_ENV ]; then
+          export GITHUB_SHA=`echo $CODEBUILD_BUILD_ID | cut -d ":" -f2`
+          bash api/ci-cd/build_docker_image.sh approvals api/Dockerfile.buddy
+        fi
+
+  post_build:
+    commands:
+      - |
+        if [ $APP_ENV ]; then
+          curl -X GET -H "buddy-api-key:${BUDDY_API_KEY}" "${DEPLOYER_URL}/api/build_over?name=${APP_ENV}&repo=${REPO_NAME}&build_success=${CODEBUILD_BUILD_SUCCEEDING}&build_number=${CODEBUILD_BUILD_NUMBER}"
+          sleep 5
+          curl --max-time 1 http://buddy-ci.hiver.space?area=${APP_ENV}
+          echo Area Updated....${APP_ENV}
+        fi
+
+cache:
+  paths:
+    - 'ci-cd/build/**/*'
