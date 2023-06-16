@@ -148,5 +148,3 @@ https://www.numpyninja.com/post/run-jmeter-and-generate-html-dashboard-report-fr
 * Add Auth token inside API
     - right click on API -> Add -> Config Element -> HTTP Header Manager
 
-Once done, save it and run, the result will be loading inside 'View Results Tree' , 'Summary Report'
-
